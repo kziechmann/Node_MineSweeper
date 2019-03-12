@@ -74,15 +74,33 @@ function click(field, num_rows, num_cols, given_i,given_j){
 console.log('\n')
 console.log('Welcome to Node.js MineSweeper')
 console.log('\n')
-rl.question("What is your name?",(answer)=>{
-    state.name = answer.trim()
-    console.log('\n')
-    rl.question(`Hi ${state.name},How many columns should the minefield have?`,(columnsInput)=>{
-        state.columns = columnsInput
-        console.log('\n')
-        rl.question(`How many rows should the minefield have?`,(rowInput)=>{
-            state.rows = rowInput
-            
+
+'use strict'
+
+const question1 = () => {
+  return new Promise((resolve, reject) => {
+    rl.question('What is your name?\n ', (answer) => {
+      state.name = answer.trim()
+      console.log('\n')
+      resolve()
+    })
+  })
+}
+
+const question2 = () => {
+  return new Promise((resolve, reject) => {
+    rl.question(`Hi ${state.name},How many columns should the minefield have? \n`, (columnsInput) => {
+      state.columns = columnsInput
+      resolve()
+    })
+  })
+}
+
+const question3 = () => {
+  return new Promise((resolve, reject) => {
+      rl.question(`How many rows should the minefield have?\n`,(rowInput) => {
+      state.rows = rowInput
+
             let bombs = []
             for(let i=0; i<= Math.floor(Math.random()*state.rows) + 1;i++){
                 bombs.push([Math.floor(Math.random()*state.rows),Math.floor(Math.random()*state.columns)])
@@ -91,17 +109,34 @@ rl.question("What is your name?",(answer)=>{
             state.field = mine_sweeper(bombs,state.rows,state.columns)
             print_field(mine_sweeper([],state.rows,state.columns))
 
-            rl.question(`Please enter x,y coordinates to guess an empty square`,(guess)=>{
-                let coords = guess.trim().split(",")
-                let xGuess = Number(coords[0])
-                let yGuess = Number(coords[1])
-                state.field = click(state.field, state.rows, state.columns, xGuess, yGuess )
-                print_field(state.field)
-                rl.close()
-            })
-        })
+      resolve()
     })
-})
+  })
+}
+
+const question4 = () => {
+  return new Promise((resolve, reject) => {
+    rl.question(`Please enter x,y coordinates to guess an empty square:\t`, (guess) => {
+      let coords = guess.trim().split(",")
+      let xGuess = Number(coords[0])
+      let yGuess = Number(coords[1])
+      state.field = click(state.field, state.rows, state.columns, xGuess, yGuess )
+      print_field(state.field)
+      rl.close()
+    })
+  })
+}
+
+const main = async () => {
+  await question1()
+  await question2()
+  await question3()
+  await question4()
+  rl.close()
+}
+
+main()
+
 rl.on('close', function(){
-    console.log(`Thanks for playing Node.js Minesweeper`)
+    console.log(`Thanks for playing Node.js Minesweeper! \n`)
 })
